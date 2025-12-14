@@ -99,20 +99,20 @@ def save_to_neon(df):
             );
         """))
         
-        # ... (Rest of the Upsert logic needs to include search_term) ...
         df.to_sql('job_postings_temp', engine, if_exists='replace', index=False)
         
         print("Merging data...")
-        # Note: If ID exists, we usually do NOTHING. 
-        # But if you want to update the 'search_term' for existing jobs, that's complex.
-        # For now, let's just insert new ones.
         
         conn.execute(text("""
-            INSERT INTO job_postings (id, title, company, location, description, salary_min, salary_max, created_at, source_url, search_term)
-            SELECT id, title, company, location, description, salary_min, salary_max, created_at, source_url, search_term
+            INSERT INTO job_postings (id, title, company, location, description, salary_min, salary_max, created_at, source_url, search_term, last_seen_at)
+            SELECT id, title, company, location, description, salary_min, salary_max, created_at, source_url, search_term, NOW()
             FROM job_postings_temp
-            ON CONFLICT (id) DO NOTHING;
-        """))
+            ON CONFLICT (id)
+            DO UPDATE SET 
+            last_seen_at = EXCLUDED.last_seen_at,
+            salary_min = EXCLUDED.salary_min,  -- Optional: Update salary if it changed
+            salary_max = EXCLUDED.salary_max;
+                """))
         conn.commit()
         print("Success! Jobs saved.")
 
