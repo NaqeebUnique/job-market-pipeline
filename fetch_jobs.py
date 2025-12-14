@@ -68,6 +68,7 @@ def process_data(jobs_list):
             "search_term": item.get("search_role") # <--- New Field
         })
     df = pd.DataFrame(jobs)
+    df = df.drop_duplicates(subset=['id'])
     # Ensure types
     df['salary_min'] = pd.to_numeric(df['salary_min'], errors='coerce')
     df['salary_max'] = pd.to_numeric(df['salary_max'], errors='coerce')
