@@ -83,6 +83,8 @@ def save_to_neon(df):
     
     with engine.connect() as conn:
         # Update Create Table to include 'search_term'
+        print("Dropping old table to update schema...") 
+        conn.execute(text("DROP TABLE IF EXISTS job_postings"))
         conn.execute(text("""
             CREATE TABLE IF NOT EXISTS job_postings (
                 id TEXT PRIMARY KEY,
