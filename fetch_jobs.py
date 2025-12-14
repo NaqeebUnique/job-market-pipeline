@@ -97,7 +97,8 @@ def save_to_neon(df):
                 created_at TIMESTAMP,
                 inserted_at TIMESTAMP DEFAULT NOW(),
                 source_url TEXT,
-                search_term TEXT  -- <--- New Column
+                search_term TEXT,
+                last_seen_at TIMESTAMP
             );
         """))
         
