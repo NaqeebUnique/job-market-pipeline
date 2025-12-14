@@ -1,0 +1,29 @@
+name: Daily Job Fetch
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Runs at 12:00 PM UTC every day
+  workflow_dispatch:      # Allows you to click a "Run Now" button manually
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install libraries
+      run: pip install -r requirements.txt
+
+    - name: Run ETL Script
+      env:
+        ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+        ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        NEON_DB_URL: ${{ secrets.NEON_DB_URL }}
+      run: python fetch_jobs.py
