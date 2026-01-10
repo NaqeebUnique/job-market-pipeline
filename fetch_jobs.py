@@ -78,14 +78,11 @@ def process_data(jobs_list):
 # --- 3. SAVE TO NEON ---
 def save_to_neon(df):
     if df.empty: return
-
     print("Connecting to Neon...")
     engine = create_engine(NEON_CONNECTION_STRING)
     
     with engine.connect() as conn:
         # Update Create Table to include 'search_term'
-        print("Dropping old table to update schema...") 
-        conn.execute(text("DROP TABLE IF EXISTS job_postings"))
         conn.execute(text("""
             CREATE TABLE IF NOT EXISTS job_postings (
                 id TEXT PRIMARY KEY,
@@ -124,3 +121,4 @@ if __name__ == "__main__":
     raw = fetch_jobs()
     clean = process_data(raw)
     save_to_neon(clean)
+
